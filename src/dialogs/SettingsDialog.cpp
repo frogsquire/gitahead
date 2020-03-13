@@ -126,6 +126,8 @@ public:
       AboutDialog::openSharedInstance(AboutDialog::Privacy);
     });
 
+    mTerminalCommand = new QLineEdit(this);
+
     QFormLayout *form = new QFormLayout;
     form->addRow(tr("User name:"), mName);
     form->addRow(tr("User email:"), mEmail);
@@ -136,6 +138,7 @@ public:
     form->addRow(tr("Credentials:"), mStoreCredentials);
     form->addRow(tr("Usage reporting:"), mUsageReporting);
     form->addRow(QString(), privacy);
+    form->addRow(tr("Terminal emulator command:"), mTerminalCommand);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(16,12,16,12);
@@ -185,6 +188,10 @@ public:
     connect(mUsageReporting, &QCheckBox::toggled, [](bool checked) {
       Settings::instance()->setValue("tracking/enabled", checked);
     });
+
+    connect(mTerminalCommand, &QLineEdit::textChanged, [](const QString &text) {
+      Settings::instance()->setValue("terminal/command", text);
+    });
   }
 
   void init()
@@ -207,6 +214,8 @@ public:
 
     mStoreCredentials->setChecked(settings->value("credential/store").toBool());
     mUsageReporting->setChecked(settings->value("tracking/enabled").toBool());
+
+    mTerminalCommand->setText(settings->value("terminal/command").toString());
   }
 
 private:
@@ -220,6 +229,8 @@ private:
   QCheckBox *mAutoPrune;
   QCheckBox *mStoreCredentials;
   QCheckBox *mUsageReporting;
+
+  QLineEdit *mTerminalCommand;
 };
 
 class ToolsPanel : public QWidget
